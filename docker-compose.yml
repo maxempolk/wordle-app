@@ -8,10 +8,30 @@ services:
     volumes:
       - ./backend/app:/app
 
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"      # Максимум 50% одного ядра
+          memory: "256M"   # Лимит памяти 256 МБ
+        reservations:
+          cpus: "0.1"      # Минимум 10% ядра
+          memory: "128M"   # Зарезервировано 128 МБ
+    restart: unless-stopped
+
   frontend:
     build: ./frontend
     ports:
       - "80:80"
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"      # Максимум 50% одного ядра
+          memory: "256M"   # Лимит памяти 256 МБ
+        reservations:
+          cpus: "0.1"      # Минимум 10% ядра
+          memory: "128M"   # Зарезервировано 128 МБ
+    restart: unless-stopped
 
 # Слева: Порт хоста (ваша машина, например, 3000 или 80).
 # Справа: Порт контейнера (внутри контейнера, например, 3000 или 8000).
