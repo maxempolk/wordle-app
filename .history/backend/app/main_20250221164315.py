@@ -1,0 +1,21 @@
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from .utils import WordManager
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="../../dist"), name="static")
+
+wm = WordManager()
+
+@app.get('/word')
+def get_random_word_route():
+    return { 'word': wm.get_current_word() }
+
+@app.get('/')
+def index():
+    with open('../../dist/index.html', 'r') as file:
+        return HTMLResponse(file.read())
+
+
+# CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--port", "80", "--host", "0.0.0.0"]

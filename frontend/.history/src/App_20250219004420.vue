@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import TheLetter from './components/TheLetter.vue'
+</script>
+
+<template>
+  <div class="grid grid-cols-5">
+    <TheLetter value="e" v-for="i in 30" />
+  </div>
+</template>
+
+<style scoped></style>

@@ -1,0 +1,16 @@
+# Этап 1: Сборка зависимостей
+FROM python:3.12-alpine AS builder
+RUN apk-get update && apk-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apk/lists/*
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
+
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+# Если requirements.txt не обязателен, его можно убрать
+RUN uv sync --frozen --no-dev  # Устанавливаем только продакшен-зависимости
+
+
+# Запуск приложения в продакшен-режиме
+CMD ["uv", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "80"]

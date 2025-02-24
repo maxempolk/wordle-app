@@ -1,0 +1,20 @@
+# Используем официальный образ Python как базовый
+FROM python:3.11-slim
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем uv
+RUN pip install --no-cache-dir uv
+
+# Копируем только файлы зависимостей
+COPY pyproject.toml requirements.txt uv.lock ./
+
+# Создаем проект с uv и устанавливаем зависимости
+RUN uv sync
+
+# Копируем остальной код приложения
+COPY . .
+
+# Указываем команду для запуска (использует uv для запуска Python)
+CMD ["uv", "run", "fastapi", "dev"]

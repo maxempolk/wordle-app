@@ -1,0 +1,27 @@
+# Многоступенчатая сборка
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Копируем только файлы для зависимостей
+COPY package.json package-lock.json* ./
+RUN npm ci --production
+
+# Копируем исходники и собираем
+COPY . .
+RUN npm run build
+
+# Финальный этап - только необходимые файлы
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Устанавливаем только serve без лишних зависимостей
+RUN npm install -g serve
+
+# Копируем только собранные файлы из предыдущего этапа
+COPY --from=builder /app/build ./build
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "build", "-l", "3000"]

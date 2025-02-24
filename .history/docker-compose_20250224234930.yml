@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/app:/app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8000"
+
+
+networks:
+  app-network:
+    driver: bridge

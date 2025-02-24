@@ -1,0 +1,23 @@
+# Этап 1: Сборка зависимостей
+FROM python:3.12-slim-bookworm AS builder
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
+
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+# Если requirements.txt не обязателен, его можно убрать
+RUN uv sync --frozen --no-dev  # Устанавливаем только продакшен-зависимости
+
+# Этап 2: Финальный образ
+FROM python:3.12-slim-bookworm
+WORKDIR /app
+COPY --from=builder /root/.local /root/.local  # Копируем только uv и зависимости
+COPY . .
+
+ENV PATH="/root/.local/bin/:$PATH"
+
+# Запуск приложения в продакшен-режиме
+CMD ["uv", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "80"]

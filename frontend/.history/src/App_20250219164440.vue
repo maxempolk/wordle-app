@@ -1,0 +1,68 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import TheLetter from './components/TheLetter.vue'
+import { useTemplateRef } from 'vue'
+import { wordleAlgh } from './utils/wordle'
+import { useRealWordStore } from './stores/realWord'
+import theKeyboard from '@/components/TheKeyboard.vue'
+import { useUsedLettersStore } from './stores/usedLetters'
+
+const store = useRealWordStore()
+
+const words = ref<string[]>([])
+const currentWord = ref<string>('')
+const usedLettersStore = useUsedLettersStore()
+
+type letterType = InstanceType<typeof TheLetter>
+const letters = useTemplateRef<letterType[]>('letter')
+
+const completeWord = () => {
+  words.value.push(currentWord.value)
+  currentWord.value = ''
+}
+
+const slotsForCurrentWord = () => {
+  const count = words.value.length
+  return Array.from({ length: 5 }, (_, i) => count * 5 + i)
+}
+
+onMounted(() => {
+  addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key == 'Enter' && currentWord.value.length == 5) {
+      const colors = wordleAlgh(store.word, currentWord.value)
+
+      colors.forEach((state, index) => {
+        usedLettersStore.add(
+          letter: currentWord.value[index],
+          state: state,
+        })
+      })
+
+      slotsForCurrentWord().forEach((el: number) => {
+        if (letters.value !== null) {
+          letters.value[el].completeAnimation(colors[el % 5])
+        }
+      })
+      completeWord()
+    } else if (e.key == 'Backspace') currentWord.value = currentWord.value.slice(0, -1)
+    else if (e.key.length == 1 && currentWord.value.length < 5) {
+      currentWord.value += e.key
+    }
+  })
+})
+
+const rawData = computed(() => {
+  return words.value.reduce((word1, word2) => word1 + word2, '') + currentWord.value
+})
+</script>
+
+<template>
+  <div class="flex w-screen h-screen justify-center items-center flex-col gap-50">
+    <div class="grid gap-2 grid-cols-5 w-fit">
+      <TheLetter v-for="i in 30" :key="i" :model-value="rawData[i - 1]" ref="letter" />
+    </div>
+    <theKeyboard />
+  </div>
+</template>
+
+<style scoped></style>
