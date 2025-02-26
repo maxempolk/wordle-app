@@ -13,6 +13,7 @@ base_path = Path(__file__).parent.resolve()
 origins: list[str] = [
     "http://localhost:5173",            # Для Vite в режиме разработки
     "https://polyak.pp.ua",             # Продакшен: главный домен frontend
+    "https://api.polyak.pp.ua"          # Добавить этот поддомен
 ]
 
 
