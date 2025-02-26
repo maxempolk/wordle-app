@@ -1,0 +1,23 @@
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+WORKDIR /app
+
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+
+# Копируем файлы проекта
+ADD . /app
+
+# Создаем виртуальное окружение и устанавливаем зависимости
+RUN uv venv .venv
+RUN uv sync
+RUN uv pip install --no-cache-dir fastapi-cli
+
+# Добавляем путь к виртуальному окружению в PATH
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Проверяем, что fastapi действительно установлен и доступен
+
+# Запускаем сервер
+ENTRYPOINT []
+CMD ["fastapi", "dev", "--host", "0.0.0.0", "--port", "8000"]

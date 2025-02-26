@@ -1,10 +1,11 @@
 services:
   backend:
+    # build: ./backend
     image: "maxempolk/wordle-backend"
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend/app:/app
+    # volumes:
+    #   - ./backend/app:/app
 
     deploy:
       resources:
@@ -17,6 +18,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    # build: ./frontend
     image: "maxempolk/wordle-frontend"
     ports:
       - "8001:80"
