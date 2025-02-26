@@ -21,7 +21,7 @@ services:
     # build: ./frontend
     image: "maxempolk/wordle-frontend"
     ports:
-      - "8001:80"
+      - "80:80"
 
     deploy:
       resources:
