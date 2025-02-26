@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   backend:
-    build: ./backend
+    image: "maxempolk/wordle-backend"
     ports:
       - "8000:8000"
     volumes:
@@ -19,7 +17,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    image: "maxempolk/wordle-frontend"
     ports:
       - "8001:80"
 

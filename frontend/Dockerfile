@@ -17,5 +17,3 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Порт по умолчанию для Nginx
 EXPOSE 80
-
-# Nginx запускается автоматически, ничего дополнительно указывать не нужно
